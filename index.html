@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>My Membership Card Wallet App</title>
+  <meta name="theme-color" content="#111827" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">Private Wallet</p>
+      <h1>My Membership Card Wallet App</h1>
+    </div>
+    <button id="installHelpBtn" class="ghost-btn" type="button">Install Help</button>
+  </header>
+
+  <main>
+    <section id="homeView" class="view active">
+      <div class="hero-card">
+        <h2>Saved Membership Cards</h2>
+        <p>Store membership numbers, barcode display, and optional card photos privately in this browser.</p>
+        <button id="addNewCardBtn" class="primary-btn" type="button">+ Add New Card</button>
+      </div>
+
+      <div class="section-title-row">
+        <h3>All Saved Cards</h3>
+        <button id="exportBtn" class="small-btn" type="button">Export Backup</button>
+      </div>
+
+      <div id="cardsList" class="cards-grid"></div>
+
+      <div class="import-box">
+        <label for="importFile" class="small-btn">Import Backup</label>
+        <input id="importFile" type="file" accept="application/json" hidden />
+      </div>
+    </section>
+
+    <section id="formView" class="view">
+      <div class="top-row">
+        <button id="backBtn" class="ghost-btn" type="button">← Back</button>
+        <h2 id="formTitle">Add New Card</h2>
+      </div>
+
+      <form id="cardForm" class="form-card">
+        <input type="hidden" id="cardId" />
+
+        <label>
+          Card / Store Name
+          <input id="cardName" required placeholder="Costco, CVS, Gym, Library..." />
+        </label>
+
+        <label>
+          Membership Number
+          <input id="memberNumber" inputmode="text" autocomplete="off" placeholder="Enter number or scan card" />
+        </label>
+
+        <div class="button-row">
+          <button id="scanCameraBtn" class="secondary-btn" type="button">Scan Barcode with Camera</button>
+          <button id="scanPhotoBtn" class="secondary-btn" type="button">Scan from Card Photo</button>
+        </div>
+
+        <label>
+          Barcode Type
+          <select id="barcodeType">
+            <option value="auto">Auto / Best Guess</option>
+            <option value="code128">Code 128</option>
+            <option value="ean13">EAN-13</option>
+            <option value="upca">UPC-A</option>
+            <option value="qrcode">QR Code</option>
+            <option value="pdf417">PDF417</option>
+          </select>
+        </label>
+
+        <label>
+          Optional Card Photo
+          <input id="cardPhoto" type="file" accept="image/*" capture="environment" />
+        </label>
+
+        <div id="photoPreviewWrap" class="photo-preview-wrap hidden">
+          <img id="photoPreview" alt="Card photo preview" />
+          <button id="removePhotoBtn" class="danger-ghost" type="button">Remove Photo</button>
+        </div>
+
+        <label>
+          Notes
+          <textarea id="cardNotes" rows="3" placeholder="Optional notes, e.g. phone number, login, card rules"></textarea>
+        </label>
+
+        <div class="button-row">
+          <button class="primary-btn" type="submit">Save Card</button>
+          <button id="cancelBtn" class="ghost-btn" type="button">Cancel</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="detailView" class="view">
+      <div class="top-row">
+        <button id="detailBackBtn" class="ghost-btn" type="button">← Cards</button>
+        <div>
+          <h2 id="detailName"></h2>
+          <p id="detailNumber"></p>
+        </div>
+      </div>
+
+      <div class="barcode-card">
+        <canvas id="barcodeCanvas"></canvas>
+        <p id="barcodeTypeLabel" class="muted"></p>
+        <button id="fullscreenBarcodeBtn" class="primary-btn" type="button">Show Full Screen Barcode</button>
+      </div>
+
+      <div id="detailPhotoWrap" class="detail-photo hidden">
+        <h3>Original Card Photo</h3>
+        <img id="detailPhoto" alt="Original membership card" />
+      </div>
+
+      <div id="detailNotesWrap" class="detail-notes hidden">
+        <h3>Notes</h3>
+        <p id="detailNotes"></p>
+      </div>
+
+      <div class="button-row">
+        <button id="editBtn" class="secondary-btn" type="button">Edit Card</button>
+        <button id="deleteBtn" class="danger-btn" type="button">Delete Card</button>
+      </div>
+    </section>
+
+    <section id="scannerView" class="view">
+      <div class="top-row">
+        <button id="scannerBackBtn" class="ghost-btn" type="button">← Cancel</button>
+        <h2>Scan Barcode</h2>
+      </div>
+
+      <div class="scanner-card">
+        <video id="scannerVideo" playsinline muted></video>
+        <p id="scannerStatus">Camera scanner is starting...</p>
+      </div>
+    </section>
+
+    <section id="fullscreenView" class="view fullscreen-view">
+      <button id="exitFullscreenBtn" class="ghost-btn floating-exit" type="button">Close</button>
+      <div class="fullscreen-inner">
+        <h2 id="fullscreenName"></h2>
+        <canvas id="fullscreenCanvas"></canvas>
+        <p id="fullscreenNumber"></p>
+        <p class="muted">Tip: Turn your screen brightness up before scanning.</p>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="installDialog">
+    <h2>Install on iPhone</h2>
+    <ol>
+      <li>Open this app URL in Safari.</li>
+      <li>Tap the Share button.</li>
+      <li>Tap “Add to Home Screen.”</li>
+      <li>Tap “Add.”</li>
+    </ol>
+    <p class="muted">Camera scanning requires the app to be hosted on HTTPS or opened from localhost.</p>
+    <button id="closeInstallDialog" class="primary-btn" type="button">Got it</button>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/bwip-js@4.5.1/dist/bwip-js-min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
