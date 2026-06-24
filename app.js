@@ -418,7 +418,9 @@ async function scanFromPhoto() {
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = 'image/*';
-  input.capture = 'environment';
+  // Do not set input.capture here.
+  // On iPhone, capture='environment' forces the camera.
+  // Without capture, iOS lets you choose Photo Library, Take Photo, or Files.
 
   input.onchange = async () => {
     const file = input.files?.[0];

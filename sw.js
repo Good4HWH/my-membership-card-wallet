@@ -1,4 +1,4 @@
-const CACHE_NAME = 'membership-card-wallet-v1';
+const CACHE_NAME = 'membership-card-wallet-v2';
 const APP_SHELL = [
   './',
   './index.html',
